@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -65,7 +64,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Tạo index để tìm kiếm sessionId nhanh hơn trong mảng
 userSchema.index({ sessions: 1 });
 
 const User = mongoose.model('User', userSchema);

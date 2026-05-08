@@ -12,7 +12,7 @@ const noteRoutes = require('./routers/noteRouter.js');
 const editRoutes = require('./routers/editRouter.js');
 const usersRoutes = require('./routers/usersRouter.js');
 
-const User = require('./models/users'); // 🔥 thêm để lấy user từ DB
+const User = require('./models/users'); //
 
 const app = express();
 const session = require('express-session');
@@ -34,7 +34,7 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ===== Cookie parser (SIGNED) =====
-app.use(cookieParser(process.env.COOKIES_KEY)); // 🔥 quan trọng
+app.use(cookieParser(process.env.COOKIES_KEY)); 
 
 // ===== View engine =====
 app.set('view engine', 'ejs');
@@ -44,7 +44,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔥 GLOBAL AUTH MIDDLEWARE (GIỮ LOGIC, CHỈ SỬA COOKIE)
+// 🔥 
 app.use(async (req, res, next) => {
   try {
     // 👉 dùng signedCookies

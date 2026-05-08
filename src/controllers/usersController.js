@@ -47,7 +47,7 @@ async function remove(req, res) {
 }
 
 // [GET] Register page
-function showRegister(req, res) {
+async function showRegister(req, res) {
     return res.render("sites/register", { errors: null, oldData: {} });
 }
 

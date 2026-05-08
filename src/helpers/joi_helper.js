@@ -1,5 +1,4 @@
 const Joi = require('joi');
-
 // Schema validation cho việc tạo user
 const createUserSchema = Joi.object({
   name: Joi.string()

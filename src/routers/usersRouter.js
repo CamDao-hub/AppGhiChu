@@ -16,19 +16,19 @@ router.get('/profile/:id', userController.detail);
 
 // ===== CRUD USERS =====
 
-// 📌 LẤY DANH SÁCH USER
+// LẤY DANH SÁCH USER
 router.get('/', userController.list);
 
-// 📌 TẠO USER
+// TẠO USER
 router.post('/', userController.create);
 
-// 📌 LẤY USER THEO ID (ĐỔI ROUTE cho an toàn)
+// LẤY USER THEO ID (ĐỔI ROUTE cho an toàn)
 router.get('/detail/:id', userController.detail);
 
-// 📌 CẬP NHẬT USER
+// CẬP NHẬT USER
 router.put('/detail/:id', userController.update);
 
-// 📌 XOÁ USER
+// XOÁ USER
 router.delete('/detail/:id', userController.remove);
 
 module.exports = router;
