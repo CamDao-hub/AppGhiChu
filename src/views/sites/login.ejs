@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng nhập</title>
+
+  <link rel="stylesheet" href="/stylesheets/output.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center font-vietnam">
+
+  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
+
+    <!-- TITLE -->
+    <h2 class="text-2xl font-semibold text-center mb-4">
+      Đăng nhập
+    </h2>
+
+    <!-- SUCCESS -->
+    <% if (success) { %>
+      <div class="bg-green-100 text-green-700 p-2 rounded text-sm text-center mb-3">
+        <%= success %>
+      </div>
+    <% } %>
+
+    <!-- ERROR -->
+    <% if (error) { %>
+      <div class="bg-red-100 text-red-700 p-2 rounded text-sm text-center mb-3">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <!-- FORM -->
+    <form action="/users/login" method="POST" class="space-y-4">
+
+      <!-- EMAIL -->
+      <input 
+        type="text"
+        name="email"
+        value="<%= oldData ? oldData.email : '' %>"
+        placeholder="Email"
+        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      >
+
+      <!-- PASSWORD -->
+      <div class="relative">
+        <input 
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Mật khẩu"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
+          required
+        >
+
+        <!-- ICON -->
+        <button 
+          type="button"
+          onclick="togglePassword()"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        >
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" 
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" 
+               class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5
+                 c4.477 0 8.268 2.943 9.542 7
+                 -1.274 4.057-5.065 7-9.542 7
+                 -4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- BUTTON -->
+      <button 
+        type="submit"
+        class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition font-medium">
+        Đăng nhập
+      </button>
+
+    </form>
+
+    <!-- REGISTER -->
+    <p class="text-sm text-center mt-4 text-gray-500">
+      Chưa có tài khoản?
+      <a href="/users/register" class="text-blue-500 hover:underline font-medium">
+        Đăng ký
+      </a>
+    </p>
+
+    <!-- BACK -->
+    <div class="text-center mt-2">
+      <a href="/" class="text-sm text-gray-400 hover:underline">
+        ← Quay lại trang chính
+      </a>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function togglePassword() {
+      const input = document.getElementById("password");
+      const icon = document.getElementById("eyeIcon");
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13.875 18.825A10.05 10.05 0 0112 19
+               c-4.478 0-8.269-2.943-9.543-7
+               a9.956 9.956 0 012.223-3.592M6.223 6.223
+               A9.956 9.956 0 0112 5
+               c4.478 0 8.268 2.943 9.543 7
+               a9.956 9.956 0 01-4.132 5.411M3 3l18 18"/>
+        `;
+      } else {
+        input.type = "password";
+        icon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5
+               c4.477 0 8.268 2.943 9.542 7
+               -1.274 4.057-5.065 7-9.542 7
+               -4.477 0-8.268-2.943-9.542-7z"/>
+        `;
+      }
+    }
+  </script>
+
+</body>
+</html>

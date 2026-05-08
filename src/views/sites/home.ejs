@@ -1,0 +1,139 @@
+<% 
+  if (typeof notes === "undefined") notes = []; 
+  if (typeof page === "undefined") page = 'home';
+%>
+<%- include("../layouts/header.ejs") %>
+
+<div class="max-w-xl mx-auto mb-10">
+  <% if (user) { %>
+    <% if (page === 'home') { %>
+      <form id="noteForm" action="/notes" method="POST" enctype="multipart/form-data" class="bg-white p-3 rounded-lg shadow border transition-all">
+        <div id="imagePreviewContainer" class="hidden mb-2 relative">
+          <img id="imagePreview" src="#" class="w-full h-auto rounded-lg border object-cover max-h-72">
+          <button type="button" onclick="removeImage()" class="absolute top-2 right-2 bg-gray-900 bg-opacity-50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-70">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+        <input id="titleInput" type="text" name="title" placeholder="Tiêu đề" class="w-full mb-2 p-2 outline-none hidden font-medium text-lg">
+        <textarea id="contentInput" name="content" placeholder="Ghi chú..." class="w-full p-2 outline-none resize-none" rows="1" onclick="expandForm()" required></textarea>
+        <div id="extraFields" class="hidden mt-2 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <select name="color" class="p-1 border rounded text-sm bg-gray-50 outline-none">
+              <option value="bg-white">trắng</option>
+              <option value="bg-yellow-200">vàng</option>
+              <option value="bg-green-200">xanh lá</option>
+              <option value="bg-blue-200">xanh dương</option>
+              <option value="bg-pink-200">hồng</option>
+            </select>
+            <label class="cursor-pointer hover:bg-gray-100 p-2 rounded-full flex items-center justify-center transition" title="Thêm hình ảnh">
+              <span class="material-symbols-outlined text-gray-600 text-xl">image</span>
+              <input type="file" name="image" id="imageInput" class="hidden" accept="image/*" onchange="previewFile()">
+            </label>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="collapseForm()" class="px-4 py-1 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded">Hủy</button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded text-sm font-medium hover:bg-blue-600 shadow-sm">Lưu</button>
+          </div>
+        </div>
+      </form>
+    <% } else if (page === 'trash') { %>
+      <div class="text-center py-4">
+        <p class="text-gray-500 italic text-sm">Ghi chú trong Thùng rác sẽ bị xóa vĩnh viễn nếu bạn thao tác xóa.</p>
+      </div>
+    <% } %>
+  <% } else { %>
+    <div class="bg-white p-4 rounded-lg shadow text-center text-gray-500">
+      Vui lòng <a href="/users/login" class="text-blue-500 hover:underline font-medium">đăng nhập</a> để tạo ghi chú
+    </div>
+  <% } %>
+</div>
+
+<% if (user) { %>
+  <div class="px-6">
+    <div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
+      <% notes.forEach(note => { %>
+        <div class="note-item <%= note.color || 'bg-white' %> break-inside-avoid mb-4 p-4 rounded-xl shadow-sm hover:shadow-md border border-transparent hover:border-gray-200 transition group">
+          <% if (note.image) { %>
+            <img src="/images/<%= note.image %>" class="w-full h-auto rounded-lg mb-3 border border-gray-100">
+          <% } %>
+          <h2 class="note-title font-semibold mb-1 break-words text-gray-800"><%= note.title %></h2>
+          <p class="note-content text-sm text-gray-700 break-words"><%= note.content %></p>
+          
+          <div class="flex justify-end items-center gap-4 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <% if (page === 'trash') { %>
+              <form action="/notes/restore/<%= note._id %>" method="POST" title="Khôi phục">
+                <button class="text-gray-500 hover:text-green-600 transition flex items-center gap-1">
+                  <span class="material-symbols-outlined text-lg">restore_from_trash</span>
+                  <span class="text-[10px] font-bold">HOÀN TÁC</span>
+                </button>
+              </form>
+              <form action="/notes/delete-forever/<%= note._id %>" method="POST" onsubmit="return confirm('Xóa vĩnh viễn ghi chú này?')">
+                <button class="text-gray-500 hover:text-red-600 transition" title="Xóa vĩnh viễn">
+                  <span class="material-symbols-outlined text-lg">delete_forever</span>
+                </button>
+              </form>
+            <% } else { %>
+              <a href="/notes/edit/<%= note._id %>" class="text-gray-500 hover:text-blue-500 transition" title="Chỉnh sửa">
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </a>
+              <form action="/notes/delete/<%= note._id %>" method="POST" onsubmit="return confirm('Chuyển ghi chú vào thùng rác?')">
+                <button class="text-gray-500 hover:text-red-500 transition" title="Xóa">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    
+    <% if (notes.length === 0) { %>
+        <div class="text-center py-20 opacity-30">
+            <span class="material-symbols-outlined" style="font-size: 80px;">
+                <%= page === 'trash' ? 'delete_outline' : 'note_stack' %>
+            </span>
+            <p class="mt-2"><%= page === 'trash' ? 'Thùng rác trống' : 'Chưa có ghi chú nào' %></p>
+        </div>
+    <% } %>
+  </div>
+<% } %>
+
+<script>
+  function expandForm() {
+    const title = document.getElementById("titleInput");
+    const extra = document.getElementById("extraFields");
+    if(title) title.classList.remove("hidden");
+    if(extra) extra.classList.remove("hidden");
+    document.getElementById("contentInput").rows = 3;
+  }
+  function collapseForm() {
+    const title = document.getElementById("titleInput");
+    const extra = document.getElementById("extraFields");
+    if(title) title.classList.add("hidden");
+    if(extra) extra.classList.add("hidden");
+    document.getElementById("contentInput").rows = 1;
+    document.getElementById("noteForm").reset();
+    removeImage();
+  }
+  function previewFile() {
+    const preview = document.getElementById('imagePreview');
+    const container = document.getElementById('imagePreviewContainer');
+    const file = document.getElementById('imageInput').files[0];
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      preview.src = reader.result;
+      container.classList.remove('hidden');
+      expandForm(); 
+    }
+    if (file) reader.readAsDataURL(file);
+  }
+  function removeImage() {
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('imagePreview');
+    const container = document.getElementById('imagePreviewContainer');
+    if(input) input.value = "";
+    if(preview) preview.src = "#";
+    if(container) container.classList.add('hidden');
+  }
+</script>
+<%- include("../layouts/footer.ejs") %>
